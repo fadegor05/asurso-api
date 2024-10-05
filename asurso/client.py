@@ -6,7 +6,6 @@ from asurso.auth import (
     logout_asurco,
     LoginData,
     auth_asurco,
-    get_login_data_asurco,
 )
 from asurso.diary.diary import Diary, get_diary_info
 from asurso.student import get_student_info, Student
@@ -24,7 +23,7 @@ class ASURSOClient:
 
     @classmethod
     def create(cls, login: str, password: str):
-        login_data = get_login_data_asurco()
+        login_data = LoginData.get()
         hashed_password = md5(login_data.salt + md5(password))
         return cls(
             login=login,

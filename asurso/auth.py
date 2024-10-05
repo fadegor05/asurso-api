@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict
 
 import requests
 
@@ -12,13 +11,25 @@ class LoginData:
     salt: str
 
     @classmethod
-    def from_data(cls, nssessionid: str, session_data: Dict):
-        return cls(
-            nssession_id=nssessionid,
-            lt=session_data["lt"],
-            ver=session_data["ver"],
-            salt=session_data["salt"],
-        )
+    def get(cls):
+        nssession_id, session_data = cls.request()
+        if nssession_id or len(session_data) > 0:
+            return cls(
+                nssession_id=nssession_id,
+                lt=session_data["lt"],
+                ver=session_data["ver"],
+                salt=session_data["salt"]
+            )
+
+    @classmethod
+    def request(cls) -> (str, str):
+        URL = "https://asurso.ru/webapi/auth/getdata"
+        response = requests.post(URL)
+        if response.status_code == 200:
+            nssession_id = response.cookies.get("NSSESSIONID")
+            data = response.json()
+            return nssession_id, data
+        return None
 
 
 @dataclass
@@ -34,16 +45,6 @@ class AuthData:
         return {"headers": {"at": self.at}, "cookies": {"ESRNSec": self.esrn}}
 
 
-def get_login_data_asurco() -> LoginData:
-    URL = "https://asurso.ru/webapi/auth/getdata"
-    response = requests.post(URL)
-    if response.status_code == 200:
-        nssessionid = response.cookies.get("NSSESSIONID")
-        data = response.json()
-        return LoginData.from_data(nssessionid, data)
-    return None
-
-
 def logout_asurco(auth_data: AuthData, login_data: LoginData):
     URL = "https://asurso.ru/webapi/auth/logout"
     params = {"at": auth_data.at, "VER": login_data.ver}
@@ -52,7 +53,7 @@ def logout_asurco(auth_data: AuthData, login_data: LoginData):
 
 
 def auth_asurco(
-    login: str, hashed_password: str, password_length: int, login_data: LoginData
+        login: str, hashed_password: str, password_length: int, login_data: LoginData
 ) -> AuthData | None:
     URL = "https://asurso.ru/webapi/login"
 

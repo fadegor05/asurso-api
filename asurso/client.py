@@ -3,9 +3,7 @@ from datetime import date
 
 from asurso.auth import (
     AuthData,
-    logout_asurco,
     LoginData,
-    auth_asurco,
 )
 from asurso.diary.diary import Diary, get_diary_info
 from asurso.student import get_student_info, Student
@@ -33,13 +31,11 @@ class ASURSOClient:
         )
 
     def auth(self):
-        self.auth_data = auth_asurco(
-            self.login, self.hashed_password, self.password_length, self.login_data
-        )
+        self.auth_data = AuthData.auth(self.login, self.hashed_password, self.password_length, self.login_data)
         self.student = get_student_info(self.auth_data)
 
     def logout(self):
-        return logout_asurco(self.auth_data, self.login_data)
+        self.auth_data.logout(self.login_data)
 
     def get_diary(self, week_start: date) -> Diary:
         return get_diary_info(self.auth_data, self.student, week_start)

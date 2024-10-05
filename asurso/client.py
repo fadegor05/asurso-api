@@ -18,9 +18,9 @@ class ASURSOClient:
     login: str
     hashed_password: str
     password_length: int
-    login_data: LoginData | None = None
-    auth_data: AuthData | None = None
-    student: Student | None = None
+    login_data: LoginData = None
+    auth_data: AuthData = None
+    student: Student = None
 
     @classmethod
     def create(cls, login: str, password: str):

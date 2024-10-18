@@ -5,6 +5,7 @@ from asurso.auth import (
     AuthData,
     LoginData,
 )
+from asurso.context import Context
 from asurso.diary.diary import Diary, get_diary_info
 from asurso.student import get_student_info, Student
 from asurso.utils import md5
@@ -18,6 +19,7 @@ class ASURSOClient:
     login_data: LoginData = None
     auth_data: AuthData = None
     student: Student = None
+    context: Context = None
 
     @classmethod
     def create(cls, login: str, password: str):
@@ -32,6 +34,7 @@ class ASURSOClient:
 
     def auth(self):
         self.auth_data = AuthData.auth(self.login, self.hashed_password, self.password_length, self.login_data)
+        self.context = Context.from_auth_data(self.auth_data)
         self.student = get_student_info(self.auth_data)
 
     def logout(self):

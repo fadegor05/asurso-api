@@ -70,10 +70,12 @@ class AuthData:
         )
         if response.status_code == 200:
             data = response.json()
-            if data.get("at") is None or response.cookies.get("ESRNSec") is None:
-                return None
-            return data.get("at"), response.cookies.get("ESRNSec")
-        return None
+            at = data.get("at")
+            esrn = response.cookies.get("ESRNSec")
+            if at is None or esrn is None:
+                raise ValueError("Invalid credentials")
+            return at, esrn
+        raise ValueError("Invalid credentials")
 
     def to_requests_auth(self):
         return {"headers": {"at": self.at}, "cookies": {"ESRNSec": self.esrn}}

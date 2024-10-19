@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import requests
 
-from asurso.auth import AuthData
+from asurso_api.auth import AuthData
 
 
 @dataclass

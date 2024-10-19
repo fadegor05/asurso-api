@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, date
 
-from asurso.diary.lesson import Lesson
+from asurso_api.diary.lesson import Lesson
 
 
 @dataclass

@@ -3,9 +3,9 @@ from datetime import date, datetime
 
 import requests
 
-from asurso.auth import AuthData
-from asurso.diary.weekday import Weekday
-from asurso.student import Student
+from asurso_api.auth import AuthData
+from asurso_api.diary.weekday import Weekday
+from asurso_api.student import Student
 
 
 @dataclass

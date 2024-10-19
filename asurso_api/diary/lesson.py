@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import time, date, datetime
 
-from asurso.diary.assignment import Assignment
+from asurso_api.diary.assignment import Assignment
 
 
 @dataclass

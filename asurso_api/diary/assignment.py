@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from asurso.diary.type import Type
+from asurso_api.diary.type import Type
 
 
 @dataclass

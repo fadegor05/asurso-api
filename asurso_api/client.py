@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from datetime import date
 
-from asurso.auth import (
+from asurso_api.auth import (
     AuthData,
     LoginData,
 )
-from asurso.context import Context
-from asurso.diary.diary import Diary, get_diary_info
-from asurso.student import get_student_info, Student
-from asurso.utils import md5
+from asurso_api.context import Context
+from asurso_api.diary.diary import Diary, get_diary_info
+from asurso_api.student import get_student_info, Student
+from asurso_api.utils import md5
 
 
 @dataclass

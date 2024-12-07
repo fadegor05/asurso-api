@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from datetime import date, datetime
 
 import requests
-from asurso_api.utils.date import get_week_interval_by_date
 
 from asurso_api.auth import AuthData
 from asurso_api.context import Context
 from asurso_api.diary.weekday import Weekday
 from asurso_api.student import Student
+from asurso_api.utils.date import get_week_interval_by_date
 
 
 @dataclass
@@ -22,6 +22,7 @@ class Diary:
     @classmethod
     def from_dict(cls, data: dict):
         weekdays = [Weekday.from_dict(day) for day in data["weekDays"]]
+        weekdays.sort(key=lambda x: x.date)
         return cls(
             week_start=datetime.fromisoformat(data["weekStart"]).date(),
             week_end=datetime.fromisoformat(data["weekEnd"]).date(),

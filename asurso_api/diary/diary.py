@@ -2,8 +2,10 @@ from dataclasses import dataclass
 from datetime import date, datetime
 
 import requests
+from asurso_api.utils.date import get_week_interval_by_date
 
 from asurso_api.auth import AuthData
+from asurso_api.context import Context
 from asurso_api.diary.weekday import Weekday
 from asurso_api.student import Student
 
@@ -30,13 +32,15 @@ class Diary:
         )
 
 
-def get_diary_info(auth_data: AuthData, student: Student, week_start: date) -> Diary:
+def get_diary_info(auth_data: AuthData, student: Student, context: Context,
+                   day: date = datetime.now().date()) -> Diary:
+    start_datetime, end_datetime = get_week_interval_by_date(day)
     URL = "https://asurso.ru/webapi/student/diary"
     params = {
         "studentId": student.student_id,
-        "weekEnd": "2024-09-29",
-        "weekStart": "2024-09-23",
-        "yearId": 222228,
+        "weekStart": start_datetime.strftime("%Y-%m-%d"),
+        "weekEnd": end_datetime.strftime("%Y-%m-%d"),
+        "yearId": context.school_year_id,
     }
     response = requests.get(URL, params=params, **auth_data.to_requests_auth())
     return Diary.from_dict(response.json())

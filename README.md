@@ -5,8 +5,14 @@
 ## Пример
 
 ```shell
+from asurso_api import ASURSOClient
+from asurso_api.auth import AuthPlaceData
+
+# Данные о входе для вашей школы
+place = AuthPlaceData(country_id=2, region_id=1, region_area_id=-1, city_id=1, school_type_id=2, school_id=2436)
+
 # Создание клиента из данных аккаунта для Самарской Области
-client = ASURSOClient.from_account_data("Login", "Password", region=Region.SAM)
+client = ASURSOClient.from_account_data("Login", "Password", place, region=Region.SAM)
 client.init()
 
 # Информация об ученике

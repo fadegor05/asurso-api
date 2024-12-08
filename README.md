@@ -1,3 +1,7 @@
+# ASURSO-API
+
+**Проект находиться в глубокой разработке**
+
 ## Пример
 
 ```shell
@@ -15,3 +19,6 @@ print(client.context)
 diary = client.get_diary(date)
 print(diary)
 ```
+
+Спасибо [VityaSchel](https://github.com/VityaSchel), в разработке участвовали его
+наработки [обертки АСУ РСО на JavaScript](https://github.com/VityaSchel/asurso)

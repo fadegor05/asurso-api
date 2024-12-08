@@ -33,10 +33,10 @@ class Diary:
         )
 
 
-def get_diary_info(auth_data: AuthData, student: Student, context: Context,
+def get_diary_info(base_url: str, auth_data: AuthData, student: Student, context: Context,
                    day: date = datetime.now().date()) -> Diary:
     start_datetime, end_datetime = get_week_interval_by_date(day)
-    URL = "https://asurso.ru/webapi/student/diary"
+    URL = f"{base_url}/webapi/student/diary"
     params = {
         "studentId": student.student_id,
         "weekStart": start_datetime.strftime("%Y-%m-%d"),

@@ -24,8 +24,8 @@ class Student:
         )
 
 
-def get_student_info(auth_data: AuthData) -> Student:
-    URL = "https://asurso.ru/webapi/student/diary/init"
+def get_student_info(base_url: str, auth_data: AuthData) -> Student:
+    URL = f"{base_url}/webapi/student/diary/init"
     response = requests.get(URL, **auth_data.to_requests_auth())
 
     if response.status_code == 200:

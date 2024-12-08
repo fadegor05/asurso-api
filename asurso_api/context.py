@@ -15,8 +15,8 @@ class Context:
     user_name: str
 
     @classmethod
-    def from_auth_data(cls, auth_data: AuthData):
-        context = cls.request_context(auth_data)
+    def from_auth_data(cls, base_url: str, auth_data: AuthData):
+        context = cls.request_context(base_url, auth_data)
         return cls(global_year_id=context["globalYearId"],
                    school_year_id=context["schoolYearId"],
                    school_id=context["schoolId"],
@@ -25,7 +25,7 @@ class Context:
                    user_name=context["user"]["name"])
 
     @classmethod
-    def request_context(cls, auth_data: AuthData):
-        URL = "https://asurso.ru/webapi/context"
+    def request_context(cls, base_url: str, auth_data: AuthData):
+        URL = f"{base_url}/webapi/context"
         response = requests.get(URL, **auth_data.to_requests_auth())
         return response.json()

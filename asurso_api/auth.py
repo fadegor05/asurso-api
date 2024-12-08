@@ -11,8 +11,8 @@ class LoginData:
     salt: str
 
     @classmethod
-    def get(cls):
-        nssession_id, session_data = cls.request_login()
+    def get(cls, base_url: str):
+        nssession_id, session_data = cls.request_login(base_url)
         if nssession_id or len(session_data) > 0:
             return cls(
                 nssession_id=nssession_id,
@@ -22,8 +22,8 @@ class LoginData:
             )
 
     @classmethod
-    def request_login(cls) -> (str, str):
-        URL = "https://asurso.ru/webapi/auth/getdata"
+    def request_login(cls, base_url: str) -> (str, str):
+        URL = f"{base_url}/webapi/auth/getdata"
         response = requests.post(URL)
         if response.status_code == 200:
             nssession_id = response.cookies.get("NSSESSIONID")
@@ -42,14 +42,15 @@ class AuthData:
         return cls(at=at, esrn=esrn)
 
     @classmethod
-    def auth(cls, login: str, hashed_password: str, password_length: int, login_data: LoginData):
-        at, esrn = cls.request_auth(login, hashed_password, password_length, login_data)
+    def auth(cls, base_url: str, login: str, hashed_password: str, password_length: int, login_data: LoginData):
+        at, esrn = cls.request_auth(base_url, login, hashed_password, password_length, login_data)
         if at and esrn:
             return cls(at=at, esrn=esrn)
 
     @classmethod
-    def request_auth(cls, login: str, hashed_password: str, password_length: int, login_data: LoginData) -> (str, str):
-        URL = "https://asurso.ru/webapi/login"
+    def request_auth(cls, base_url: str, login: str, hashed_password: str, password_length: int,
+                     login_data: LoginData) -> (str, str):
+        URL = f"{base_url}/webapi/login"
 
         params = {
             "LoginType": 1,
@@ -80,8 +81,8 @@ class AuthData:
     def to_requests_auth(self):
         return {"headers": {"at": self.at}, "cookies": {"ESRNSec": self.esrn}}
 
-    def logout(self, login_data: LoginData):
-        URL = "https://asurso.ru/webapi/auth/logout"
+    def logout(self, base_url: str, login_data: LoginData):
+        URL = f"{base_url}/webapi/auth/logout"
         params = {"at": self.at, "VER": login_data.ver}
         response = requests.post(URL, params=params)
         return response.status_code

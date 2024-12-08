@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 
 from asurso_api.auth import (
-    AuthData, PreAuthData,
+    AuthData, PreAuthData, AuthPlaceData,
 )
 from asurso_api.context import Context
 from asurso_api.diary.diary import Diary, get_diary_info
@@ -20,11 +20,12 @@ class ASURSOClient:
     context: Context = None
 
     @classmethod
-    def from_account_data(cls, login: str, password: str, region: Region = Region.SAM):
+    def from_account_data(cls, login: str, password: str, auth_place_data: AuthPlaceData, region: Region = Region.SAM):
         pre_auth_data = PreAuthData.get(region.value)
         hashed_password = md5(pre_auth_data.salt + md5(password))
         return cls(
-            auth_data=AuthData.auth(region.value, login, hashed_password, len(password), pre_auth_data),
+            auth_data=AuthData.auth(region.value, login, hashed_password, len(password), pre_auth_data,
+                                    auth_place_data),
             base_url=region.value,
         )
 

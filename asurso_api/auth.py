@@ -4,6 +4,16 @@ import requests
 
 
 @dataclass
+class AuthPlaceData:
+    region_id: int
+    region_area_id: int
+    city_id: int
+    school_type_id: int
+    school_id: int
+    country_id: int = 2
+
+
+@dataclass
 class PreAuthData:
     nssession_id: str
     lt: str
@@ -42,24 +52,25 @@ class AuthData:
         return cls(at=at, esrn=esrn)
 
     @classmethod
-    def auth(cls, base_url: str, login: str, hashed_password: str, password_length: int, login_data: LoginData):
-        at, esrn = cls.request_auth(base_url, login, hashed_password, password_length, login_data)
+    def auth(cls, base_url: str, login: str, hashed_password: str, password_length: int, pre_auth_data: PreAuthData,
+             auth_place_data: AuthPlaceData):
+        at, esrn = cls.request_auth(base_url, login, hashed_password, password_length, pre_auth_data, auth_place_data)
         if at and esrn:
             return cls(at=at, esrn=esrn)
 
     @classmethod
     def request_auth(cls, base_url: str, login: str, hashed_password: str, password_length: int,
-                     pre_auth_data: PreAuthData) -> (str, str):
+                     pre_auth_data: PreAuthData, auth_place_data: AuthPlaceData) -> (str, str):
         URL = f"{base_url}/webapi/login"
 
         params = {
             "LoginType": 1,
-            "cid": 2,
-            "sid": 1,
-            "pid": -1,
-            "cn": 1,
-            "sft": 2,
-            "scid": 2436,
+            "cid": auth_place_data.country_id,
+            "sid": auth_place_data.region_id,
+            "pid": auth_place_data.region_area_id,
+            "cn": auth_place_data.city_id,
+            "sft": auth_place_data.school_type_id,
+            "scid": auth_place_data.school_id,
             "UN": login,
             "PW": hashed_password[:password_length],
             "lt": pre_auth_data.lt,

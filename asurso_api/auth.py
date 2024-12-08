@@ -4,7 +4,7 @@ import requests
 
 
 @dataclass
-class LoginData:
+class PreAuthData:
     nssession_id: str
     lt: str
     ver: str
@@ -12,7 +12,7 @@ class LoginData:
 
     @classmethod
     def get(cls, base_url: str):
-        nssession_id, session_data = cls.request_login(base_url)
+        nssession_id, session_data = cls.request_pre_auth(base_url)
         if nssession_id or len(session_data) > 0:
             return cls(
                 nssession_id=nssession_id,
@@ -22,7 +22,7 @@ class LoginData:
             )
 
     @classmethod
-    def request_login(cls, base_url: str) -> (str, str):
+    def request_pre_auth(cls, base_url: str) -> (str, str):
         URL = f"{base_url}/webapi/auth/getdata"
         response = requests.post(URL)
         if response.status_code == 200:
@@ -49,7 +49,7 @@ class AuthData:
 
     @classmethod
     def request_auth(cls, base_url: str, login: str, hashed_password: str, password_length: int,
-                     login_data: LoginData) -> (str, str):
+                     pre_auth_data: PreAuthData) -> (str, str):
         URL = f"{base_url}/webapi/login"
 
         params = {
@@ -62,12 +62,12 @@ class AuthData:
             "scid": 2436,
             "UN": login,
             "PW": hashed_password[:password_length],
-            "lt": login_data.lt,
+            "lt": pre_auth_data.lt,
             "pw2": hashed_password,
-            "ver": login_data.ver,
+            "ver": pre_auth_data.ver,
         }
         response = requests.post(
-            URL, params=params, cookies={"NSSESSIONID": login_data.nssession_id}
+            URL, params=params, cookies={"NSSESSIONID": pre_auth_data.nssession_id}
         )
         if response.status_code == 200:
             data = response.json()
@@ -81,8 +81,8 @@ class AuthData:
     def to_requests_auth(self):
         return {"headers": {"at": self.at}, "cookies": {"ESRNSec": self.esrn}}
 
-    def logout(self, base_url: str, login_data: LoginData):
+    def logout(self, base_url: str, pre_auth_data: PreAuthData):
         URL = f"{base_url}/webapi/auth/logout"
-        params = {"at": self.at, "VER": login_data.ver}
+        params = {"at": self.at, "VER": pre_auth_data.ver}
         response = requests.post(URL, params=params)
         return response.status_code
